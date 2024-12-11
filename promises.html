@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Promises</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 50px;
+        background-color: rgb(201, 244, 136);
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        margin-top: 20px;
+        cursor: pointer;
+      }
+      #result {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Promises Example</h1>
+    <button id="fetchButton">Fetch Data</button>
+    <div id="result">Waiting for promise...</div>
+
+    <script>
+      document.getElementById("fetchButton").addEventListener("click", () => {
+        fetchDataWithPromise();
+      });
+
+      function fetchDataWithPromise() {
+        const resultDiv = document.getElementById("result");
+
+        // Displays "Loading..." while the Promise is pending
+        resultDiv.innerHTML = '<span class="loading">Loading...</span>';
+
+        // Created a timeout promise that will reject after 5 seconds
+        const timeout = new Promise((_, reject) =>
+          setTimeout(() => reject("Operation timed out"), 5000)
+        );
+
+        // The main fetch promise
+        const fetchData = fetch("https://dummyjson.com/posts")
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((data) => data.posts.map((post) => post.title).join("<br>"))
+          .catch((err) => err.message);
+
+        // Used Promise.race to handle the timeout and fetch in parallel. Returns which function can give the data first.
+        Promise.race([fetchData, timeout])
+          .then((data) => {
+            resultDiv.innerHTML = data; // Displays the fetched data
+          })
+          .catch((error) => {
+            resultDiv.innerHTML = `<span class="error">${error}</span>`; // Displays the error message
+          });
+      }
+    </script>
+  </body>
+</html>

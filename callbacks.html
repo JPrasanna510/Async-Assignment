@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Callbacks</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 100px;
+        background-color: plum;
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        margin-top: 20px;
+        cursor: pointer;
+      }
+      #output {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Callbacks Example</h1>
+    <button id="cButton">Click Me</button>
+    <div id="output">Waiting to show callback...</div>
+
+    <script>
+      const outputDiv = document.getElementById("output");
+      const cButton = document.getElementById("cButton");
+
+      // Callback function to simulate delay
+
+      // Fetch data from API
+      function fetchData(callback) {
+        setTimeout(() => {
+          fetch("https://dummyjson.com/posts")
+            .then((response) => response.json())
+            .then((data) => {
+              let titles = "";
+              data.posts.map((post) => (titles += `<div>${post.title}</div>`));
+
+              callback(titles);
+            })
+            .catch((error) => {
+              callback(`Error:${error.message}`);
+            });
+        }, 5000);
+      }
+
+      // Button click event
+      cButton.addEventListener("click", () => {
+        outputDiv.innerHTML = "Callback executing...";
+        fetchData((titles) => {
+          outputDiv.innerHTML = `<h3>Callback executed after 5 seconds:</h3><br>${titles}`;
+        });
+      });
+    </script>
+  </body>
+</html>

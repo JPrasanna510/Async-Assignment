@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Async-Await</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 50px;
+        background-color: rgb(243, 226, 98);
+      }
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        margin-top: 20px;
+        cursor: pointer;
+      }
+      #output {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Async-Await</h1>
+    <button id="fButton">Click Me!</button>
+    <div id="output">Click the button to fetch data...</div>
+    <script>
+      document
+        .getElementById("fButton")
+        .addEventListener("click", fetchPostTitles);
+
+      async function fetchPostTitles() {
+        const resultDiv = document.getElementById("output");
+        resultDiv.textContent = "Loading..."; // Show loading message while fetching data
+
+        try {
+          // Fetch data from the API using async/await
+          const response = await fetch("https://dummyjson.com/posts");
+
+          if (!response.ok) {
+            throw new Error("Failed to fetch data");
+          }
+
+          const data = await response.json();
+
+          // Display titles
+          const titles = data.posts.map((post) => post.title).join("<br>");
+          resultDiv.innerHTML = titles; // Display titles in output div
+        } catch (error) {
+          // Error handling for network issues or unexpected errors
+          resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+        }
+      }
+    </script>
+  </body>
+</html>
